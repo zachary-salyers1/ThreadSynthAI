@@ -82,8 +82,13 @@
 </div>
 
 <script>
-document.getElementById('temperature').addEventListener('input', function(e) {
-    document.getElementById('temperatureValue').textContent = e.target.value;
+document.addEventListener('DOMContentLoaded', function() {
+    const temperatureSlider = document.getElementById('temperature');
+    if (temperatureSlider) {
+        temperatureSlider.addEventListener('input', function(e) {
+            document.getElementById('temperatureValue').textContent = e.target.value;
+        });
+    }
 });
 </script>
 {% endblock %}
