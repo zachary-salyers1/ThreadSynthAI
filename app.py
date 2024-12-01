@@ -1,5 +1,5 @@
 import os
-from flask import Flask, render_template, request, jsonify, flash
+from flask import Flask, render_template, request, jsonify, flash, make_response
 from werkzeug.utils import secure_filename
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.orm import DeclarativeBase
@@ -82,6 +82,23 @@ def upload_file():
 @app.route('/thread/<int:thread_id>')
 def view_thread(thread_id):
     thread = Thread.query.get_or_404(thread_id)
+    return render_template('thread.html', thread=thread)
+
+@app.route('/thread/<int:thread_id>/export', methods=['GET'])
+def export_thread(thread_id):
+    thread = Thread.query.get_or_404(thread_id)
+    
+    # Format the thread content for export
+    content = f"🧵 {thread.title}\n\n"
+    for i, post in enumerate(thread.posts, 1):
+        content += f"Post {i}/{len(thread.posts)}:\n{post.content}\n\n"
+    
+    # Create response with the content
+    response = make_response(content)
+    response.headers['Content-Type'] = 'text/plain'
+    response.headers['Content-Disposition'] = f'attachment; filename=thread_{thread_id}.txt'
+    
+    return response
 
 @app.route('/config', methods=['GET', 'POST'])
 def configure():
@@ -105,7 +122,6 @@ def configure():
         
     config = get_config()
     return render_template('config.html', config=config)
-    return render_template('thread.html', thread=thread)
 
 with app.app_context():
     db.create_all()
