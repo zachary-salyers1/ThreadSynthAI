@@ -64,6 +64,11 @@
 .post-content {
     margin-left: 3.5rem;
     white-space: pre-wrap;
+    line-height: 1.6;
+}
+
+.post-content p {
+    margin-bottom: 1.5rem;
 }
 
 .thread-connector {
