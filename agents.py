@@ -22,12 +22,14 @@ def process_document(file_path: str) -> str:
     documents = loader.load()
     
     text_splitter = RecursiveCharacterTextSplitter(
-        chunk_size=1000,
-        chunk_overlap=200
+        chunk_size=2000,  # Smaller chunks for initial processing
+        chunk_overlap=100
     )
     
     splits = text_splitter.split_documents(documents)
-    return "\n".join([doc.page_content for doc in splits])
+    # Take only first N chunks to avoid overwhelming the model
+    max_chunks = 10
+    return "\n".join([doc.page_content for doc in splits[:max_chunks]])
 
 class ThreadState(TypedDict):
     content: str
@@ -36,32 +38,32 @@ class ThreadState(TypedDict):
 
 def create_thread(content: str) -> Dict:
     """Create a thread from the document content using LangChain."""
+    # Split content into smaller chunks (max ~4000 tokens each)
+    text_splitter = RecursiveCharacterTextSplitter(
+        chunk_size=4000,
+        chunk_overlap=200
+    )
+    chunks = text_splitter.split_text(content)
     
     # Initialize LLM
     llm = ChatOpenAI(temperature=0.7)
     output_parser = StrOutputParser()
     
-    # Create prompts for different parts
+    # Create title from first chunk only
     title_prompt = PromptTemplate.from_template(
         "Summarize the following content into a thread title that would grab attention on social media: {content}"
     )
-    
-    post_prompt = PromptTemplate.from_template(
-        "Create an engaging thread post from this content. Make it conversational and informative, "
-        "using a style similar to popular social media threads: {content}"
-    )
-    
-    # Create chains
     title_chain = title_prompt | llm | output_parser
+    title = title_chain.invoke({"content": chunks[0]})
+    
+    # Process each chunk into 1-2 posts
+    posts = []
+    post_prompt = PromptTemplate.from_template(
+        "Create 1-2 engaging thread posts from this content. Make them conversational and informative: {content}"
+    )
     post_chain = post_prompt | llm | output_parser
     
-    # Generate title
-    title = title_chain.invoke({"content": content[:1000]})  # Use first 1000 chars for title
-    
-    # Generate posts
-    posts = []
-    chunks = content.split('\n\n')
-    for chunk in chunks[:5]:  # Limit to 5 posts
+    for chunk in chunks[:5]:  # Limit to 5 chunks to keep thread reasonable
         if chunk.strip():
             post = post_chain.invoke({"content": chunk})
             posts.append({"content": post})
