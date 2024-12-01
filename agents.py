@@ -6,9 +6,13 @@ from langchain_core.output_parsers import StrOutputParser
 from typing import Dict, TypedDict, Annotated
 import os
 import mimetypes
+from config import get_config
 
 def process_document(file_path: str) -> str:
     """Process the uploaded document and extract its content."""
+    # Get current configuration
+    config = get_config()
+    
     # Detect file type using mimetypes
     file_type, _ = mimetypes.guess_type(file_path)
     
@@ -22,14 +26,12 @@ def process_document(file_path: str) -> str:
     documents = loader.load()
     
     text_splitter = RecursiveCharacterTextSplitter(
-        chunk_size=2000,  # Smaller chunks for initial processing
-        chunk_overlap=100
+        chunk_size=config.chunk_size,
+        chunk_overlap=config.chunk_overlap
     )
     
     splits = text_splitter.split_documents(documents)
-    # Take only first N chunks to avoid overwhelming the model
-    max_chunks = 10
-    return "\n".join([doc.page_content for doc in splits[:max_chunks]])
+    return "\n".join([doc.page_content for doc in splits[:config.max_chunks]])
 
 class ThreadState(TypedDict):
     content: str
@@ -38,31 +40,34 @@ class ThreadState(TypedDict):
 
 def create_thread(content: str) -> Dict:
     """Create a thread from the document content using LangChain."""
-    # Split content into smaller chunks (max ~4000 tokens each)
+    # Get current configuration
+    config = get_config()
+    
+    # Split content into smaller chunks
     text_splitter = RecursiveCharacterTextSplitter(
-        chunk_size=4000,
-        chunk_overlap=200
+        chunk_size=config.chunk_size * 2,  # Larger chunks for thread creation
+        chunk_overlap=config.chunk_overlap
     )
     chunks = text_splitter.split_text(content)
     
-    # Initialize LLM
-    llm = ChatOpenAI(temperature=0.7)
+    # Initialize LLM with configuration
+    llm = ChatOpenAI(
+        model_name=config.model_name,
+        temperature=config.temperature,
+        max_tokens=config.max_tokens
+    )
     output_parser = StrOutputParser()
     
-    # Create title from first chunk only
-    title_prompt = PromptTemplate.from_template(
-        "Summarize the following content into a thread title that would grab attention on social media: {content}"
-    )
+    # Create title from first chunk using configured prompt
+    title_prompt = PromptTemplate.from_template(config.prompts["title"])
     title_chain = title_prompt | llm | output_parser
     title = title_chain.invoke({"content": chunks[0]})
     
     # Combine chunks into one content piece (limited to preserve context)
-    combined_content = " ".join(chunks[:3])  # Limit to first 3 chunks to stay within token limits
+    combined_content = " ".join(chunks[:3])
     
-    # Generate single thread post
-    post_prompt = PromptTemplate.from_template(
-        "Create a single engaging thread post from this content. Format it as a thread with line breaks between key points, use emojis where appropriate, and make it conversational: {content}"
-    )
+    # Generate thread post using configured prompt
+    post_prompt = PromptTemplate.from_template(config.prompts["thread"])
     post_chain = post_prompt | llm | output_parser
     post = post_chain.invoke({"content": combined_content})
     posts = [{"content": post}]
