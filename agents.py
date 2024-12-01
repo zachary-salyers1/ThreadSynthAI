@@ -9,12 +9,15 @@ import os
 
 def process_document(file_path: str) -> str:
     """Process the uploaded document and extract its content."""
-    # For now, we'll handle text files only
-    if not file_path.lower().endswith('.txt'):
-        raise ValueError("Currently only .txt files are supported")
-        
-    loader = TextLoader(file_path)
-    documents = loader.load()
+    import magic
+    
+    # Detect file type using python-magic
+    mime = magic.Magic(mime=True)
+    file_type = mime.from_file(file_path)
+    
+    if file_type.startswith('text/'):
+        loader = TextLoader(file_path)
+        documents = loader.load()
     
     text_splitter = RecursiveCharacterTextSplitter(
         chunk_size=1000,
