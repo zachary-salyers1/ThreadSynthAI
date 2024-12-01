@@ -1,0 +1,12 @@
+{
+  "model_name": "gpt-3.5-turbo",
+  "temperature": 0.8,
+  "max_tokens": 1000,
+  "chunk_size": 2000,
+  "chunk_overlap": 100,
+  "max_chunks": 10,
+  "prompts": {
+    "title": "Summarize the following content into a thread title that would grab attention on X (formerly Twitter): {content}",
+    "thread": "Create a single engaging thread post from this content. Format it as a thread with line breaks between key points, use emojis where appropriate, and make it conversational: {content}"
+  }
+}

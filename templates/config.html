@@ -80,15 +80,4 @@
         </div>
     </div>
 </div>
-
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-    const temperatureSlider = document.getElementById('temperature');
-    if (temperatureSlider) {
-        temperatureSlider.addEventListener('input', function(e) {
-            document.getElementById('temperatureValue').textContent = e.target.value;
-        });
-    }
-});
-</script>
 {% endblock %}
