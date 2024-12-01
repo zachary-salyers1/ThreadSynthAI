@@ -5,13 +5,20 @@
     <div class="col-md-8">
         <div class="card">
             <div class="card-body">
-                <h1 class="card-title mb-4">{{ thread.title }}</h1>
+                <h1 class="card-title h3 mb-4">{{ thread.title }}</h1>
                 
                 <div class="thread-container">
                     {% for post in thread.posts %}
                     <div class="thread-post">
-                        <p class="mb-2">{{ post.content }}</p>
-                        <small class="text-muted">{{ post.created_at.strftime('%B %d, %Y %H:%M') }}</small>
+                        <div class="thread-post-header">
+                            <div class="avatar">AI</div>
+                            <div class="post-meta">
+                                <div class="username">ThreadBot</div>
+                                <small class="text-muted">{{ post.created_at.strftime('%B %d, %Y %H:%M') }}</small>
+                            </div>
+                        </div>
+                        <div class="post-content">{{ post.content }}</div>
+                        <div class="thread-connector"></div>
                     </div>
                     {% endfor %}
                 </div>

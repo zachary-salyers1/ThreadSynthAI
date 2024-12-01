@@ -12,16 +12,70 @@
     background-color: rgba(var(--bs-primary-rgb), 0.1);
 }
 
-.thread-post {
-    border-left: 2px solid var(--bs-primary);
-    margin-bottom: 1rem;
-    padding-left: 1rem;
-}
-
 .progress-indicator {
     display: none;
 }
 
 .progress-indicator.active {
+    display: block;
+}
+
+.thread-container {
+    padding: 1rem 0;
+}
+
+.thread-post {
+    position: relative;
+    margin-bottom: 1.5rem;
+    padding: 1rem;
+    border: 1px solid var(--bs-border-color);
+    border-radius: 8px;
+    background: var(--bs-dark);
+}
+
+.thread-post-header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 0.75rem;
+}
+
+.avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: var(--bs-primary);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    margin-right: 0.75rem;
+}
+
+.post-meta {
+    flex: 1;
+}
+
+.username {
+    font-weight: bold;
+    margin-bottom: 0.25rem;
+}
+
+.post-content {
+    margin-left: 3.5rem;
+    white-space: pre-wrap;
+}
+
+.thread-connector {
+    position: absolute;
+    left: 20px;
+    top: 60px;
+    bottom: -20px;
+    width: 2px;
+    background: var(--bs-primary);
+    display: none;
+}
+
+.thread-post:not(:last-child) .thread-connector {
     display: block;
 }
