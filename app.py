@@ -18,7 +18,7 @@ app.config["SQLALCHEMY_ENGINE_OPTIONS"] = {
 }
 app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024  # 16MB max file size
 app.config['UPLOAD_FOLDER'] = tempfile.gettempdir()
-ALLOWED_EXTENSIONS = {'txt'}
+ALLOWED_EXTENSIONS = {'txt', 'pdf'}
 
 db.init_app(app)
 

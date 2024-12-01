@@ -1,4 +1,4 @@
-from langchain_community.document_loaders import TextLoader
+from langchain_community.document_loaders import PyPDFLoader, TextLoader
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 from langchain_community.chat_models import ChatOpenAI
 from langchain.chains import LLMChain
@@ -17,7 +17,12 @@ def process_document(file_path: str) -> str:
     
     if file_type.startswith('text/'):
         loader = TextLoader(file_path)
-        documents = loader.load()
+    elif file_type == 'application/pdf':
+        loader = PyPDFLoader(file_path)
+    else:
+        raise ValueError(f"Unsupported file type: {file_type}")
+        
+    documents = loader.load()
     
     text_splitter = RecursiveCharacterTextSplitter(
         chunk_size=1000,
