@@ -13,4 +13,6 @@ dependencies = [
     "langgraph>=0.2.53",
     "unstructured>=0.16.8",
     "langchain-community>=0.3.8",
+    "langchain-unstructured",
+    "langchain-core",
 ]

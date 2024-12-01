@@ -1,15 +1,19 @@
-from langchain_community.document_loaders import UnstructuredFileLoader
+from langchain_community.document_loaders import TextLoader
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 from langchain_community.chat_models import ChatOpenAI
 from langchain.chains import LLMChain
 from langchain.prompts import PromptTemplate
 from langgraph.graph import StateGraph
 from typing import Dict, TypedDict
-import asyncio
+import os
 
 def process_document(file_path: str) -> str:
     """Process the uploaded document and extract its content."""
-    loader = UnstructuredFileLoader(file_path)
+    # For now, we'll handle text files only
+    if not file_path.lower().endswith('.txt'):
+        raise ValueError("Currently only .txt files are supported")
+        
+    loader = TextLoader(file_path)
     documents = loader.load()
     
     text_splitter = RecursiveCharacterTextSplitter(
