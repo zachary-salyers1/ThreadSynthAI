@@ -5,12 +5,15 @@
     <div class="col-md-8">
         <div class="card">
             <div class="card-body">
-                <h2 class="card-title mb-4">AI Configuration</h2>
+                <h2 class="card-title mb-4">
+                    <i class="fas fa-cog me-2"></i>AI Configuration
+                </h2>
                 
                 {% with messages = get_flashed_messages(with_categories=true) %}
                     {% if messages %}
                         {% for category, message in messages %}
                             <div class="alert alert-{{ 'success' if category == 'success' else 'danger' }} alert-dismissible fade show" role="alert">
+                                <i class="fas fa-{{ 'check-circle' if category == 'success' else 'exclamation-circle' }} me-2"></i>
                                 {{ message }}
                                 <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                             </div>
@@ -19,61 +22,102 @@
                 {% endwith %}
 
                 <form method="POST" action="{{ url_for('configure') }}">
-                    <div class="mb-3">
-                        <label for="model_name" class="form-label">Model Name</label>
+                    <div class="mb-4">
+                        <label for="model_name" class="form-label">
+                            <i class="fas fa-microchip me-2"></i>Model Name
+                        </label>
                         <select class="form-select" id="model_name" name="model_name">
                             <option value="gpt-3.5-turbo" {% if config.model_name == 'gpt-3.5-turbo' %}selected{% endif %}>GPT-3.5 Turbo</option>
                             <option value="gpt-4" {% if config.model_name == 'gpt-4' %}selected{% endif %}>GPT-4</option>
+                            <option value="gpt-4o" {% if config.model_name == 'gpt-4o' %}selected{% endif %}>GPT-4o (High Intelligence)</option>
+                            <option value="gpt-4o-mini" {% if config.model_name == 'gpt-4o-mini' %}selected{% endif %}>GPT-4o Mini (Fast & Lightweight)</option>
+                            <option value="gpt-4o-audio-preview" {% if config.model_name == 'gpt-4o-audio-preview' %}selected{% endif %}>GPT-4o Audio Preview</option>
+                            <option value="o1-mini-2024-09-12" {% if config.model_name == 'o1-mini-2024-09-12' %}selected{% endif %}>O1 Mini (Fast Reasoning)</option>
+                            <option value="o1-preview-2024-09-12" {% if config.model_name == 'o1-preview-2024-09-12' %}selected{% endif %}>O1 Preview</option>
                         </select>
-                        <div class="form-text">Select the OpenAI model to use for thread generation.</div>
+                        <div class="form-text">
+                            <i class="fas fa-info-circle me-1"></i>Select the OpenAI model to use for thread generation.
+                        </div>
                     </div>
 
-                    <div class="mb-3">
-                        <label for="temperature" class="form-label">Temperature</label>
+                    <div class="mb-4">
+                        <label for="temperature" class="form-label">
+                            <i class="fas fa-thermometer-half me-2"></i>Temperature
+                        </label>
                         <input type="range" class="form-range" id="temperature" name="temperature" min="0" max="1" step="0.1" value="{{ config.temperature }}">
                         <div class="text-center" id="temperatureValue">{{ config.temperature }}</div>
-                        <div class="form-text">Controls randomness in the output. Lower values make the output more focused and deterministic.</div>
+                        <div class="form-text">
+                            <i class="fas fa-info-circle me-1"></i>Controls randomness in the output. Lower values make the output more focused and deterministic.
+                        </div>
                     </div>
 
-                    <div class="mb-3">
-                        <label for="max_tokens" class="form-label">Max Tokens</label>
+                    <div class="mb-4">
+                        <label for="max_tokens" class="form-label">
+                            <i class="fas fa-text-width me-2"></i>Max Tokens
+                        </label>
                         <input type="number" class="form-control" id="max_tokens" name="max_tokens" value="{{ config.max_tokens }}" min="1">
-                        <div class="form-text">Maximum number of tokens to generate in the response.</div>
+                        <div class="form-text">
+                            <i class="fas fa-info-circle me-1"></i>Maximum number of tokens to generate in the response.
+                        </div>
                     </div>
 
-                    <div class="mb-3">
-                        <label for="chunk_size" class="form-label">Chunk Size</label>
+                    <div class="mb-4">
+                        <label for="chunk_size" class="form-label">
+                            <i class="fas fa-puzzle-piece me-2"></i>Chunk Size
+                        </label>
                         <input type="number" class="form-control" id="chunk_size" name="chunk_size" value="{{ config.chunk_size }}" min="1">
-                        <div class="form-text">Size of text chunks for processing documents.</div>
+                        <div class="form-text">
+                            <i class="fas fa-info-circle me-1"></i>Size of text chunks for processing documents.
+                        </div>
                     </div>
 
-                    <div class="mb-3">
-                        <label for="chunk_overlap" class="form-label">Chunk Overlap</label>
+                    <div class="mb-4">
+                        <label for="chunk_overlap" class="form-label">
+                            <i class="fas fa-layer-group me-2"></i>Chunk Overlap
+                        </label>
                         <input type="number" class="form-control" id="chunk_overlap" name="chunk_overlap" value="{{ config.chunk_overlap }}" min="0">
-                        <div class="form-text">Number of characters to overlap between chunks.</div>
+                        <div class="form-text">
+                            <i class="fas fa-info-circle me-1"></i>Number of characters to overlap between chunks.
+                        </div>
                     </div>
 
-                    <div class="mb-3">
-                        <label for="max_chunks" class="form-label">Max Chunks</label>
+                    <div class="mb-4">
+                        <label for="max_chunks" class="form-label">
+                            <i class="fas fa-cubes me-2"></i>Max Chunks
+                        </label>
                         <input type="number" class="form-control" id="max_chunks" name="max_chunks" value="{{ config.max_chunks }}" min="1">
-                        <div class="form-text">Maximum number of chunks to process.</div>
+                        <div class="form-text">
+                            <i class="fas fa-info-circle me-1"></i>Maximum number of chunks to process.
+                        </div>
                     </div>
 
-                    <div class="mb-3">
-                        <label for="title_prompt" class="form-label">Title Generation Prompt</label>
+                    <div class="mb-4">
+                        <label for="title_prompt" class="form-label">
+                            <i class="fas fa-heading me-2"></i>Title Generation Prompt
+                        </label>
                         <textarea class="form-control" id="title_prompt" name="title_prompt" rows="2">{{ config.prompts['title'] }}</textarea>
-                        <div class="form-text">Template for generating thread titles. Use {content} as placeholder for the input text.</div>
+                        <div class="form-text">
+                            <i class="fas fa-info-circle me-1"></i>Template for generating thread titles. Use {content} as placeholder for the input text.
+                        </div>
                     </div>
 
-                    <div class="mb-3">
-                        <label for="thread_prompt" class="form-label">Thread Generation Prompt</label>
+                    <div class="mb-4">
+                        <label for="thread_prompt" class="form-label">
+                            <i class="fas fa-comment-alt me-2"></i>Thread Generation Prompt
+                        </label>
                         <textarea class="form-control" id="thread_prompt" name="thread_prompt" rows="3">{{ config.prompts['thread'] }}</textarea>
-                        <div class="form-text">Template for generating thread content. Use {content} as placeholder for the input text.</div>
+                        <div class="form-text">
+                            <i class="fas fa-info-circle me-1"></i>Template for generating thread content. Use {content} as placeholder for the input text.
+                        </div>
                     </div>
 
                     <div class="text-center">
-                        <button type="submit" class="btn btn-primary">Save Configuration</button>
-                        <a href="{{ url_for('index') }}" class="btn btn-secondary ms-2">Back to Home</a>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-save me-2"></i>Save Configuration
+                        </button>
+                        <a href="{{ url_for('index') }}" class="btn btn-secondary ms-2">
+                            <i class="fas fa-arrow-left me-2"></i>Back to Home
+                        </a>
                     </div>
                 </form>
             </div>

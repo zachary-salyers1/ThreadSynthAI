@@ -5,22 +5,29 @@
     <div class="col-md-8">
         <div class="card">
             <div class="card-body">
-                <h1 class="card-title h3 mb-4">{{ thread.title }}</h1>
-                
                 <div class="thread-container">
                     {% for post in thread.posts %}
                     <div class="thread-post">
                         <div class="thread-post-header">
-                            <div class="avatar">AI</div>
+                            <div class="avatar">
+                                <i class="fas fa-robot"></i>
+                            </div>
                             <div class="post-meta">
                                 <div class="username">ThreadBot</div>
-                                <small class="text-muted">{{ post.created_at.strftime('%B %d, %Y %H:%M') }}</small>
+                                <small class="text-muted">
+                                    <i class="far fa-clock me-1"></i>{{ post.created_at.strftime('%B %d, %Y %H:%M') }}
+                                </small>
                             </div>
                         </div>
                         <div class="post-content">
+                            {% if loop.first %}
+                                {% set cleaned_title = thread.title | replace('**', '') | replace('*', '') | replace('"', '') | trim %}
+                                <p>🧵 {{ cleaned_title }}</p>
+                            {% endif %}
                             {% for line in post.content.split('\n\n') %}
                                 {% if line.strip() %}
-                                    <p>{{ line }}</p>
+                                    {% set cleaned_line = line | replace('**', '') | replace('*', '') | replace('"', '') | trim %}
+                                    <p>{{ cleaned_line }}</p>
                                 {% endif %}
                             {% endfor %}
                         </div>
@@ -31,9 +38,11 @@
                 
                 <div class="text-center mt-4">
                     <a href="{{ url_for('export_thread', thread_id=thread.id) }}" class="btn btn-secondary me-2">
-                        <i class="fas fa-download"></i> Export Thread
+                        <i class="fas fa-download me-1"></i>Export Thread
                     </a>
-                    <a href="{{ url_for('index') }}" class="btn btn-primary">Generate Another Thread</a>
+                    <a href="{{ url_for('index') }}" class="btn btn-primary">
+                        <i class="fas fa-plus me-1"></i>Generate Another Thread
+                    </a>
                 </div>
             </div>
         </div>

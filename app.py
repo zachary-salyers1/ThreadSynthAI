@@ -88,10 +88,14 @@ def view_thread(thread_id):
 def export_thread(thread_id):
     thread = Thread.query.get_or_404(thread_id)
     
-    # Format the thread content for export
-    content = f"🧵 {thread.title}\n\n"
+    # Clean and format the thread content for export
+    title = thread.title.replace('**', '').replace('*', '').replace('"', '').strip()
+    content = f"🧵 {title}\n\n"
+    
     for i, post in enumerate(thread.posts, 1):
-        content += f"Post {i}/{len(thread.posts)}:\n{post.content}\n\n"
+        # Clean markdown from the post content
+        cleaned_content = post.content.replace('**', '').replace('*', '').strip()
+        content += f"{cleaned_content}\n\n"
     
     # Create response with the content
     response = make_response(content)
