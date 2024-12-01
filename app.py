@@ -24,6 +24,7 @@ db.init_app(app)
 
 from models import Thread, ThreadPost
 from agents import process_document, create_thread
+from config import get_config, update_config
 
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
@@ -81,6 +82,29 @@ def upload_file():
 @app.route('/thread/<int:thread_id>')
 def view_thread(thread_id):
     thread = Thread.query.get_or_404(thread_id)
+
+@app.route('/config', methods=['GET', 'POST'])
+def configure():
+    if request.method == 'POST':
+        try:
+            config = update_config(
+                model_name=request.form.get('model_name'),
+                temperature=float(request.form.get('temperature', 0.7)),
+                max_tokens=int(request.form.get('max_tokens', 1000)),
+                chunk_size=int(request.form.get('chunk_size', 2000)),
+                chunk_overlap=int(request.form.get('chunk_overlap', 100)),
+                max_chunks=int(request.form.get('max_chunks', 10)),
+                prompts={
+                    'title': request.form.get('title_prompt'),
+                    'thread': request.form.get('thread_prompt')
+                } if request.form.get('title_prompt') and request.form.get('thread_prompt') else None
+            )
+            flash('Configuration updated successfully!', 'success')
+        except (ValueError, TypeError) as e:
+            flash(f'Error updating configuration: {str(e)}', 'error')
+        
+    config = get_config()
+    return render_template('config.html', config=config)
     return render_template('thread.html', thread=thread)
 
 with app.app_context():
