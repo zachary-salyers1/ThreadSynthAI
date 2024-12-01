@@ -16,4 +16,10 @@ dependencies = [
     "langchain-unstructured",
     "langchain-core",
     "python-magic-bin",
+    "werkzeug",
+    "langchain-openai",
+    "python-magic",
+    "pdf2image",
+    "pypdf",
+    "langchain-text-splitters",
 ]
