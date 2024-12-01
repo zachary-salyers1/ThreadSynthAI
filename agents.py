@@ -56,17 +56,16 @@ def create_thread(content: str) -> Dict:
     title_chain = title_prompt | llm | output_parser
     title = title_chain.invoke({"content": chunks[0]})
     
-    # Process each chunk into 1-2 posts
-    posts = []
+    # Combine chunks into one content piece (limited to preserve context)
+    combined_content = " ".join(chunks[:3])  # Limit to first 3 chunks to stay within token limits
+    
+    # Generate single thread post
     post_prompt = PromptTemplate.from_template(
-        "Create 1-2 engaging thread posts from this content. Make them conversational and informative: {content}"
+        "Create a single engaging thread post from this content. Format it as a thread with line breaks between key points, use emojis where appropriate, and make it conversational: {content}"
     )
     post_chain = post_prompt | llm | output_parser
-    
-    for chunk in chunks[:5]:  # Limit to 5 chunks to keep thread reasonable
-        if chunk.strip():
-            post = post_chain.invoke({"content": chunk})
-            posts.append({"content": post})
+    post = post_chain.invoke({"content": combined_content})
+    posts = [{"content": post}]
     
     return {
         "title": title,
